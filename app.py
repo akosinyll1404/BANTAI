@@ -20,13 +20,13 @@ if mode == "🖼️ Upload Image":
     uploaded_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
     if uploaded_image:
         image = Image.open(uploaded_image)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
         img_array = np.array(image)
         img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
 
         results = model(img_bgr)[0].plot()
         final_img = cv2.cvtColor(results, cv2.COLOR_BGR2RGB)
-        st.image(final_img, caption="Detection Result", use_column_width=True)
+        st.image(final_img, caption="Detection Result", use_container_width=True)
 
 # ---------------- VIDEO MODE ----------------
 elif mode == "🎥 Upload Video":
@@ -48,23 +48,4 @@ elif mode == "🎥 Upload Video":
 
         cap.release()
 
-# ---------------- LIVE CAMERA MODE ----------------
-elif mode == "📷 Live Webcam":
-    start = st.button("Start Webcam")
-    if start:
-        cap = cv2.VideoCapture(0)
-        stframe = st.empty()
-        st.warning("Webcam running... press [Stop] to end")
 
-        stop = st.button("Stop")
-
-        while cap.isOpened() and not stop:
-            ret, frame = cap.read()
-            if not ret:
-                break
-            results = model(frame)[0].plot()
-            frame_rgb = cv2.cvtColor(results, cv2.COLOR_BGR2RGB)
-            stframe.image(frame_rgb, channels="RGB", use_column_width=True)
-
-        cap.release()
-        st.success("Webcam stopped.")
